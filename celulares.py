@@ -97,7 +97,7 @@ def seleccionar_celular(event):
     seleccion = lista_celulares.get(lista_celulares.curselection())
     id_celular, cliente_nombre, marca, modelo = seleccion.split(" - ")
     entry_id.delete(0, END)
-    entry_id.insert(END, id_celular)
+    entry_id.insert(END, id_celular)  # Almacenar el ID internamente
     opcion_cliente.set(cliente_nombre)  # Selecciona el nombre en el menú desplegable
     entry_marca.delete(0, END)
     entry_marca.insert(END, marca)
@@ -109,10 +109,9 @@ root = Tk()
 root.title("Gestión de Celulares")
 root.geometry("500x500")
 
-# Widgets para el CRUD de Celulares
-Label(root, text="ID Celular").pack()
+# Campo oculto para almacenar ID del celular (sin label ni pack para ocultarlo)
 entry_id = Entry(root)
-entry_id.pack()
+entry_id.pack_forget()
 
 # Crear menú desplegable para seleccionar cliente
 Label(root, text="Cliente").pack()
