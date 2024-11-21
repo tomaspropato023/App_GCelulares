@@ -4,34 +4,30 @@ from tkinter import Tk, Label, Entry, Button, Listbox, Scrollbar, END, messagebo
 # Crear Repuesto
 def crear_repuesto():
     try:
-        id_celular = int(entry_id_celular.get())
         descripcion = entry_descripcion.get()
         costo = float(entry_costo.get())
-        if id_celular and descripcion and costo >= 0:
+        if descripcion and costo >= 0:
             conn = conectar_db()
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO repuestos (id_celular, descripcion, costo) VALUES (%s, %s, %s)", (id_celular, descripcion, costo))
+            # Inserta el repuesto sin requerir el ID del celular
+            cursor.execute("INSERT INTO repuestos (descripcion, costo) VALUES (%s, %s)", (descripcion, costo))
             conn.commit()
             conn.close()
             messagebox.showinfo("Éxito", "Repuesto agregado exitosamente.")
-            entry_id_celular.delete(0, END)
             entry_descripcion.delete(0, END)
             entry_costo.delete(0, END)
             mostrar_repuestos()
         else:
             messagebox.showwarning("Advertencia", "Por favor, completa todos los campos correctamente.")
     except ValueError:
-        messagebox.showerror("Error", "El ID del celular debe ser un número entero y el costo un valor numérico.")
+        messagebox.showerror("Error", "El costo debe ser un valor numérico.")
 
 # Leer Repuestos
 def obtener_repuestos():
     conn = conectar_db()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT repuestos.id_repuesto, repuestos.id_celular, repuestos.descripcion, repuestos.costo
-        FROM repuestos
-        JOIN celulares ON repuestos.id_celular = celulares.id_celular
-    """)
+    # Selecciona todos los repuestos
+    cursor.execute("SELECT id_repuesto, descripcion, costo FROM repuestos")
     repuestos = cursor.fetchall()
     conn.close()
     return repuestos
@@ -40,7 +36,7 @@ def obtener_repuestos():
 def mostrar_repuestos():
     lista_repuestos.delete(0, END)
     for repuesto in obtener_repuestos():
-        lista_repuestos.insert(END, f"{repuesto[0]} - {repuesto[1]} - {repuesto[2]} - {repuesto[3]}")
+        lista_repuestos.insert(END, f"{repuesto[0]} - {repuesto[1]} - {repuesto[2]}")
 
 # Actualizar Repuesto
 def actualizar_repuesto():
@@ -56,7 +52,6 @@ def actualizar_repuesto():
             conn.close()
             messagebox.showinfo("Éxito", "Repuesto actualizado exitosamente.")
             entry_id_repuesto.delete(0, END)
-            entry_id_celular.delete(0, END)
             entry_descripcion.delete(0, END)
             entry_costo.delete(0, END)
             mostrar_repuestos()
@@ -76,7 +71,6 @@ def eliminar_repuesto():
         conn.close()
         messagebox.showinfo("Éxito", "Repuesto eliminado exitosamente.")
         entry_id_repuesto.delete(0, END)
-        entry_id_celular.delete(0, END)
         entry_descripcion.delete(0, END)
         entry_costo.delete(0, END)
         mostrar_repuestos()
@@ -86,11 +80,9 @@ def eliminar_repuesto():
 # Función para manejar la selección en la lista
 def seleccionar_repuesto(event):
     seleccion = lista_repuestos.get(lista_repuestos.curselection())
-    id_repuesto, id_celular, descripcion, costo = seleccion.split(" - ")
+    id_repuesto, descripcion, costo = seleccion.split(" - ")
     entry_id_repuesto.delete(0, END)
     entry_id_repuesto.insert(END, id_repuesto)
-    entry_id_celular.delete(0, END)
-    entry_id_celular.insert(END, id_celular)
     entry_descripcion.delete(0, END)
     entry_descripcion.insert(END, descripcion)
     entry_costo.delete(0, END)
@@ -103,12 +95,8 @@ root.geometry("500x500")
 
 # Widgets para el CRUD de Repuestos
 Label(root, text="ID Repuesto").pack()
-entry_id_repuesto = Entry(root)
+entry_id_repuesto = Entry(root, state='readonly')  # Solo lectura
 entry_id_repuesto.pack()
-
-Label(root, text="ID Celular").pack()
-entry_id_celular = Entry(root)
-entry_id_celular.pack()
 
 Label(root, text="Descripción").pack()
 entry_descripcion = Entry(root)
