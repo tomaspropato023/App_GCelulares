@@ -54,7 +54,7 @@ def actualizar_repuesto():
             conn = conectar_db()
             cursor = conn.cursor()
             cursor.execute("UPDATE repuestos SET descripcion=%s, costo=%s WHERE id_repuesto=%s",
-                           (descripcion, costo, id_repuesto_seleccionado))
+                        (descripcion, costo, id_repuesto_seleccionado))
             conn.commit()
             conn.close()
             messagebox.showinfo("Éxito", "Repuesto actualizado exitosamente.")
