@@ -1,6 +1,8 @@
 from config import conectar_db
 from tkinter import Tk, Label, Entry, Button, Listbox, Scrollbar, END, messagebox, Frame
+from datetime import date
 
+fechaHoy = date.today()
 
 # Cargar clientes en el Listbox
 def cargar_clientes():
@@ -104,6 +106,7 @@ lista_celulares.grid(row=1, column=1, padx=10)
 # Widgets para los datos de la reparación
 Label(root, text="Fecha Ingreso (YYYY-MM-DD):").pack()
 entry_fecha_ingreso = Entry(root)
+entry_fecha_ingreso.insert(0, fechaHoy)
 entry_fecha_ingreso.pack()
 
 Label(root, text="Fecha Estimada de Entrega (YYYY-MM-DD):").pack()
